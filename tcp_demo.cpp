@@ -8,12 +8,15 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 #include "task.h"
+#include "ArduinoJson.h"
 
 #include <lwip/sockets.h>
 
+namespace json = ArduinoJson;
+
 #define TEST_TASK_PRIORITY (tskIDLE_PRIORITY + 2UL)
 
-static void send_message(int socket, char *msg) {
+static void send_message(int socket, char const *msg) {
     int len = strlen(msg);
     int done = 0;
     while (done < len) {
@@ -26,28 +29,51 @@ static void send_message(int socket, char *msg) {
 }
 
 static int handle_single_command(int conn_sock) {
-    char buffer[128];
+    char rx_buff[128];
     int done = 0;
-    send_message(conn_sock, "Enter command: ");
-    while (done < sizeof(buffer)) {
-        int done_now = recv(conn_sock, buffer + done, sizeof(buffer) - done, 0);
+    //send_message(conn_sock, "Enter command: ");
+    while (done < sizeof(rx_buff)) {
+        int done_now = recv(conn_sock, rx_buff + done, sizeof(rx_buff) - done, 0);
         if (done_now <= 0)
             return -1;
 
         done += done_now;
-        char *end = strnstr(buffer, "\r", done);
+        char *end = strnstr(rx_buff, "\0", done);
         if (!end)
             continue;
 
-        *end = 0;
-        if (!strcmp(buffer, "on")) {
-            cyw43_arch_gpio_put(0, true);
-            send_message(conn_sock, "The LED is now on\r\n");
-        } else if (!strcmp(buffer, "off")) {
-            cyw43_arch_gpio_put(0, false);
-            send_message(conn_sock, "The LED is now off\r\n");
+        auto rx_JSON_value = json::JsonDocument();
+        json::DeserializationError error = json::deserializeJson(rx_JSON_value, rx_buff);
+
+        auto tx_JSON_value = json::JsonDocument();
+        //*tx_buff = NULL;
+        int buff_len = 0;
+
+        if (error) {
+            printf("Error json parse. %s", error.c_str());
         } else {
-            send_message(conn_sock, "Unknown command\r\n");
+            for (json::JsonVariant command : rx_JSON_value.as<json::JsonArray>()) {
+                char const *command_name = command["cmd"];
+                 printf("Command Found: %s", command_name);
+                auto pars = command["pars"];
+
+                send_message(conn_sock, command_name);
+                send_message(conn_sock, "\n\r");
+    
+                // auto ans = cmd_execute(command_name, pars);
+                // tx_JSON_value[command_name] = ans;
+            }
+
+            // buff_len = json::measureJson(tx_JSON_value); /* returns 0 on fail */
+            // buff_len++;
+            // *tx_buff = new char[buff_len];
+            // if (!(*tx_buff)) {
+            //     lDebug_uart_semihost(Error, "Out Of Memory");
+            //     buff_len = 0;
+            // } else {
+            //     json::serializeJson(tx_JSON_value, *tx_buff, buff_len);
+            //     lDebug_uart_semihost(Info, "%s", *tx_buff);
+            // }
         }
         
         break;

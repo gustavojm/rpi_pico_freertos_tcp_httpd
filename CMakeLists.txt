@@ -13,7 +13,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(tcp_demo
-        tcp_demo.c)
+        tcp_demo.cpp)
 
 target_compile_definitions(tcp_demo PRIVATE
         WIFI_SSID="C14017750 7261"
@@ -24,17 +24,22 @@ target_include_directories(tcp_demo PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
         ${CMAKE_CURRENT_LIST_DIR}/../..)
 
+include(FetchContent)
+FetchContent_Declare(ArduinoJson
+    GIT_REPOSITORY https://github.com/bblanchon/ArduinoJson.git
+    GIT_TAG        v7.0.4
+)
+FetchContent_MakeAvailable(ArduinoJson)
+
 target_link_libraries(tcp_demo
         pico_cyw43_arch_lwip_sys_freertos
         pico_stdlib
         pico_lwip_iperf
         FreeRTOS-Kernel-Heap4
+        ArduinoJson
         )
 
 pico_enable_stdio_usb(tcp_demo 1)
 pico_enable_stdio_uart(tcp_demo 0)
     
 pico_add_extra_outputs(tcp_demo)
-
-
-
