@@ -15,8 +15,8 @@
 
 #define TASK_PRIORITY (tskIDLE_PRIORITY + 2UL)
 
-tcp_server::tcp_server(const char *name, int port, int thread_count) : port(port) {
-    connectionSemaphore = xSemaphoreCreateCounting(thread_count, thread_count);    
+tcp_server::tcp_server(const char *name, int port, int simultaneous_connections) : port(port), simultaneous_connections(simultaneous_connections) {
+    connectionSemaphore = xSemaphoreCreateCounting(simultaneous_connections, simultaneous_connections);    
     memset(task_name, 0, sizeof(task_name));
     strncat(task_name, name, sizeof(task_name) - strlen(task_name) - 1);
     strncat(task_name, "_task", sizeof(task_name) - strlen(task_name) - 1);
@@ -32,8 +32,8 @@ struct TaskParams {
     int conn_sock;
 };
 
-void do_handle_connection(void *arg) {
-    auto *task_params = static_cast<TaskParams *>(arg);
+void do_handle_connection(void *pvParams) {
+    auto *task_params = static_cast<TaskParams *>(pvParams);
     int conn_sock = task_params->conn_sock;
     while (!task_params->server->reply_fn(conn_sock)) {
     }
@@ -94,7 +94,7 @@ void tcp_server::task() {
         goto CLEAN_UP;
     }
 
-    if (listen(server_sock, 3 * 2) < 0) {
+    if (listen(server_sock, simultaneous_connections * 2) < 0) {        // Why times 2... Not sure why...
         printf("Unable to listen on socket: error %d\n", errno);
         goto CLEAN_UP;
     }

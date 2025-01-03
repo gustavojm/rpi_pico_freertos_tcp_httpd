@@ -5,6 +5,11 @@
 #include "semphr.h"
 #include "task.h"
 
+#include "lwip/apps/lwiperf.h"
+#include "lwip/ip4_addr.h"
+#include "lwip/netif.h"
+
+
 class tcp_server {
   public:
     explicit tcp_server(const char *name, int port, int thread_count);
@@ -27,4 +32,5 @@ class tcp_server {
     char task_name[configMAX_TASK_NAME_LEN];
     int port;
     int server_sock;
+    int simultaneous_connections;
 };

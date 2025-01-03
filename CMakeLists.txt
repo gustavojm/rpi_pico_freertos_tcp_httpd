@@ -15,6 +15,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(tcp_demo
         tcp_demo.cpp
         tcp_server.cpp
+        tcp_server_command.cpp
         )
 
 target_compile_definitions(tcp_demo PRIVATE

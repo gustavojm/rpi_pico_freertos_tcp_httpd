@@ -17,7 +17,7 @@
 #define MAIN_TASK_PRIORITY (tskIDLE_PRIORITY + 2UL)
 
 tcp_server_command cmd_server(456);
-tcp_server_command otro_server(678);
+//tcp_server_command otro_server(678);
 
 static void main_task(__unused void *params) {
     if (cyw43_arch_init()) {
@@ -35,7 +35,7 @@ static void main_task(__unused void *params) {
     }
 
     cmd_server.start();
-    otro_server.start();
+    //otro_server.start();
     //cyw43_arch_deinit();
     vTaskDelete(NULL);
 }
