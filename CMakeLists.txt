@@ -13,7 +13,9 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(tcp_demo
-        tcp_demo.cpp)
+        tcp_demo.cpp
+        tcp_server.cpp
+        )
 
 target_compile_definitions(tcp_demo PRIVATE
         WIFI_SSID="C14017750 7261"
