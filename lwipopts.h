@@ -101,4 +101,9 @@
 #define LWIP_TCPIP_CORE_LOCKING_INPUT 1
 #endif
 
+#define LWIP_HTTPD                  1
+#define LWIP_HTTPD_CGI              1  // Optional: Enable CGI support
+#define LWIP_HTTPD_SSI              1  // Optional: Enable SSI support
+#define LWIP_HTTPD_DYNAMIC_HEADERS  1  // Optional: Enable dynamic headers
+
 #endif /* __LWIPOPTS_H__ */
