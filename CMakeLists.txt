@@ -12,12 +12,31 @@ pico_sdk_init()
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
+# Set paths
+set(HTML_SOURCE_DIR ${CMAKE_SOURCE_DIR}/fs)
+set(GENERATED_FS_FILE ${CMAKE_BINARY_DIR}/fsdata.c)
+
+# Find the htmlgen tool
+find_program(HTMLGEN_EXECUTABLE html_gen PATHS ../html_gen/build/)
+if(NOT HTMLGEN_EXECUTABLE)
+    message(FATAL_ERROR "htmlgen executable not found!")
+endif()
+
+# Add a custom command to generate fsdata.c
+add_custom_command(
+    OUTPUT ${GENERATED_FS_FILE}
+    COMMAND ${HTMLGEN_EXECUTABLE} ${HTML_SOURCE_DIR} 
+    DEPENDS ${HTML_SOURCE_DIR}
+    COMMENT "Generating fsdata.c from HTML files"
+)
 add_executable(tcp_httpd_demo
         tcp_demo.cpp
         tcp_server.cpp
-        tcp_server_command.cpp        
-        ${PICO_SDK_PATH}/lib/lwip/src/apps/http/httpd.c
-        ${PICO_SDK_PATH}/lib/lwip/src/apps/http/fs.c        
+        tcp_server_command.cpp
+        cgi_example.c
+        ssi_example.c
+        httpd.c
+        fs.c        
         )
 
 target_compile_definitions(tcp_httpd_demo PRIVATE
@@ -43,6 +62,10 @@ target_link_libraries(tcp_httpd_demo
         FreeRTOS-Kernel-Heap4
         ArduinoJson
         )
+
+# Ensure fsdata.c is generated before the build
+add_custom_target(generate_fsdata DEPENDS ${GENERATED_FS_FILE})
+add_dependencies(tcp_httpd_demo generate_fsdata)
 
 pico_enable_stdio_usb(tcp_httpd_demo 1)
 pico_enable_stdio_uart(tcp_httpd_demo 0)
