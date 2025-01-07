@@ -47,6 +47,7 @@ target_compile_definitions(tcp_httpd_demo PRIVATE
 
 target_include_directories(tcp_httpd_demo PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
+        inc/
         )
 
 include(FetchContent)

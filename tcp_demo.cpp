@@ -3,6 +3,7 @@
 
 #include "lwip/apps/lwiperf.h"
 #include "lwip/apps/fs.h"
+#include <lwip/apps/httpd.h>
 #include "lwip/ip4_addr.h"
 #include "lwip/netif.h"
 
@@ -11,7 +12,6 @@
 #include "task.h"
 #include "ArduinoJson.h"
 
-#include <httpd.h>
 #include <lwip/sockets.h>
 
 #include "tcp_server_command.h"
