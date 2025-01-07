@@ -35,8 +35,9 @@ add_executable(tcp_httpd_demo
         tcp_server_command.cpp
         cgi_example.c
         ssi_example.c
+        post_example.c
         httpd.c
-        fs.c        
+        fs.c
         )
 
 target_compile_definitions(tcp_httpd_demo PRIVATE
@@ -46,7 +47,7 @@ target_compile_definitions(tcp_httpd_demo PRIVATE
 
 target_include_directories(tcp_httpd_demo PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
-        ${CMAKE_CURRENT_LIST_DIR}/../..)
+        )
 
 include(FetchContent)
 FetchContent_Declare(ArduinoJson

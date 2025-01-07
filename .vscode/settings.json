@@ -9,6 +9,7 @@
         "bitset": "cpp",
         "cstdlib": "cpp",
         "regex": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "httpd_structs.h": "c"
     },
 }

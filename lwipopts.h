@@ -106,5 +106,6 @@
 #define LWIP_HTTPD_SSI              1  // Optional: Enable SSI support
 #define LWIP_HTTPD_DYNAMIC_HEADERS  1  // Optional: Enable dynamic headers
 #define LWIP_HTTPD_SSI_MULTIPART    1
+#define LWIP_HTTPD_SUPPORT_POST     1        
 
 #endif /* __LWIPOPTS_H__ */

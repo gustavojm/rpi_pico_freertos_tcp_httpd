@@ -11,7 +11,7 @@
 #include "task.h"
 #include "ArduinoJson.h"
 
-#include <lwip/apps/httpd.h>
+#include <httpd.h>
 #include <lwip/sockets.h>
 
 #include "tcp_server_command.h"
