@@ -26,6 +26,8 @@
 
 #define MAIN_TASK_PRIORITY (tskIDLE_PRIORITY + 2UL)
 
+#include "lwip/apps/mqtt.h"
+#include "lwip/apps/mqtt_priv.h"
 //#define MQTT_SERVER_HOST "telemetria"
 #define MQTT_SERVER_PORT 1883
 
@@ -77,7 +79,7 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
  */
 void mqtt_pub_request_cb(void *arg, err_t err) {
     MQTT_CLIENT_T *client = (MQTT_CLIENT_T *)arg;
-    printf("request publish ERROR %d \n", err);
+    //printf("request publish ERROR %d \n", err);
     client->receiving = 0;
     client->received++;
 }
@@ -91,18 +93,10 @@ err_t mqtt_app_publish(MQTT_CLIENT_T *client, char *payload)
     u8_t qos = 0;       /* 0 1 or 2, see MQTT specification */
     u8_t retain = 0;
 
-    // cyw43_arch_lwip_begin();
-    // sleep_ms(2);
     err = mqtt_publish(client->mqtt_client, PUBLISH_TOPIC , payload, strlen(payload), qos, retain, mqtt_pub_request_cb, client);
 
-    // cyw43_arch_lwip_end();
-
     if(err != ERR_OK) {
-        DEBUG_printf("**** Publish fail***** %d\n", err);
-        cyw43_arch_lwip_end();
-        sleep_ms(10);
-        cyw43_arch_lwip_begin();
-        sleep_ms(10);
+        DEBUG_printf("**** Publish fail***** %d\n", err);        
     }
     return err;
 }
@@ -168,7 +162,7 @@ void publish_task(void *pvParameters)
 
     MQTT_CLIENT_T *my_mqtt_client = mqtt_client_init();
 
-    IP4_ADDR(&my_mqtt_client->remote_addr, 192, 168, 137, 243);
+    IP4_ADDR(&my_mqtt_client->remote_addr, 192, 168, 137, 131);
 
     //run_dns_lookup(my_mqtt_client); 
     
