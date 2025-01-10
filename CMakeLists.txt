@@ -63,6 +63,7 @@ target_link_libraries(tcp_httpd_demo
         pico_lwip_iperf
         FreeRTOS-Kernel-Heap4
         ArduinoJson
+        pico_lwip_mqtt
         )
 
 # Ensure fsdata.c is generated before the build
