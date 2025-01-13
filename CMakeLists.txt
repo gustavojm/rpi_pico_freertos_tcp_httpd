@@ -36,6 +36,7 @@ add_executable(tcp_httpd_demo
         cgi_example.c
         ssi_example.c
         post_example.c
+        mqtt_example.cpp
         httpd.c
         fs.c
         )
